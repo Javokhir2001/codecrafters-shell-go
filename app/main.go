@@ -14,7 +14,11 @@ func main() {
 	fmt.Print("$ ")
 	br := bufio.NewReader(os.Stdin)
 	for {
-		readLine := br.ReadString('\n')
+		readLine, err := br.ReadString('\n')
+		if err {
+			fmt.Println(err)
+			return
+		}
 		fmt.Printf("%s: command not found", readLine)
 	}
 }
