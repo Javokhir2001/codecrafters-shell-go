@@ -15,7 +15,7 @@ func main() {
 	br := bufio.NewReader(os.Stdin)
 	for {
 		readLine, err := br.ReadString('\n')
-		if err {
+		if err != nil {
 			fmt.Println(err)
 			return
 		}
