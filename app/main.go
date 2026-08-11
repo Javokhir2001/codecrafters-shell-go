@@ -19,6 +19,6 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("%s: command not found", readLine)
+		fmt.Printf(readLine[len(readLine)-1]+": command not found")
 	}
 }
