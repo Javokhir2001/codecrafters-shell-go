@@ -7,11 +7,13 @@ import (
 	"strings"
 )
 
-// Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
-var _ = fmt.Print
-
 func main() {
 	// TODO: Uncomment the code below to pass the first stage
+	builtinCommands := map[string]bool{
+		"echo": true,
+		"exit": true,
+		"type": true,
+	}
 	br := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print("$ ")
@@ -20,13 +22,24 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		command := strings.TrimSpace(readLine)
-		switch {
-			case strings.HasPrefix(command, "echo "):
-				fmt.Println(command[5:])
-			case command == "exit":
-				os.Exit(0)
-			default: fmt.Println(command + ": command not found")
+		commandLine := strings.TrimSpace(readLine)
+		commandLineSplit := strings.Split(commandLine, " ")
+		command := commandLineSplit[0]
+		switch command {
+		case "echo":
+			fmt.Println(command[5:])
+		case "exit":
+			os.Exit(0)
+		case "type":
+			cmd := commandLineSplit[1]
+			_, ok := builtinCommands[cmd]
+			if ok {
+				fmt.Println(cmd + " is a shell builtin")
+			} else {
+				fmt.Println(cmd + ": not found")
+			}
+		default:
+			fmt.Println(command + ": command not found")
 		}
 	}
 }
