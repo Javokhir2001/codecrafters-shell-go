@@ -21,9 +21,12 @@ func main() {
 			return
 		}
 		command := strings.TrimSpace(readLine)
-		if command == "exit" {
-			os.Exit(0)
+		switch {
+			case strings.HasPrefix(command, "echo "):
+				fmt.Println(command[5:])
+			case command == "exit":
+				os.Exit(0)
+			default: fmt.Println(command + ": command not found")
 		}
-		fmt.Println(command + ": command not found")
 	}
 }
