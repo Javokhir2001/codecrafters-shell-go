@@ -27,7 +27,7 @@ func main() {
 		command := commandLineSplit[0]
 		switch command {
 		case "echo":
-			fmt.Println(command[5:])
+			fmt.Println(commandLine[5:])
 		case "exit":
 			os.Exit(0)
 		case "type":
