@@ -7,8 +7,18 @@ import (
 	"strings"
 )
 
+func executableExists(path string) (bool, error) {
+	fInfo, err := os.Lstat(path)
+	if err != nil {
+		return false, err
+	}
+	isExecutable := fInfo.Mode().Perm()&0111 != 0
+	return isExecutable, nil
+}
 func main() {
 	// TODO: Uncomment the code below to pass the first stage
+	pathVar := os.Getenv("PATH")
+	pathDirs := strings.Split(pathVar, ":")
 	builtinCommands := map[string]bool{
 		"echo": true,
 		"exit": true,
@@ -36,7 +46,17 @@ func main() {
 			if ok {
 				fmt.Println(cmd + " is a shell builtin")
 			} else {
-				fmt.Println(cmd + ": not found")
+				found := false
+				for path := range pathDirs {
+					if executableExists(path + cmd) {
+						fmt.Println(cmd + " is " + path + "/" + "cmd")
+						found = true
+					}
+				}
+
+				if !found {
+					fmt.Println(cmd + ": not found")
+				}
 			}
 		default:
 			fmt.Println(command + ": command not found")
