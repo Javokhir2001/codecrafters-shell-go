@@ -11,8 +11,10 @@ import (
 func executableExists(path string, filename string) (bool, error) {
 	files, err := os.ReadDir(path)
 	if err != nil {
-		log.Fatal(err)
-		return false, err
+		if err == os.ErrNotExist {
+			log.Fatal(err)
+			return false, err
+		}
 	}
 	for _, file := range files {
 		fname := file.Name()
