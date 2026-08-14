@@ -3,17 +3,32 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 )
 
-func executableExists(path string) (bool, error) {
-	fInfo, err := os.Lstat(path)
+func executableExists(path string, filename string) (bool, error) {
+	files, err := os.ReadDir(path)
 	if err != nil {
+		log.Fatal(err)
 		return false, err
 	}
-	isExecutable := fInfo.Mode().Perm()&0111 != 0
-	return isExecutable, nil
+	for _, file := range files {
+		fname := file.Name()
+		if fname == filename {
+
+			finfo, err := os.Lstat(path + "/" + fname)
+			if err != nil {
+				return false, err
+			}
+			isExecutable := finfo.Mode().Perm()&0111 != 0
+			return isExecutable, nil
+		}
+
+	}
+
+	return false, nil
 }
 func main() {
 	// TODO: Uncomment the code below to pass the first stage
@@ -47,10 +62,16 @@ func main() {
 				fmt.Println(cmd + " is a shell builtin")
 			} else {
 				found := false
-				for path := range pathDirs {
-					if executableExists(path + cmd) {
-						fmt.Println(cmd + " is " + path + "/" + "cmd")
+				for _, path := range pathDirs {
+					isExecutable, err := executableExists(path, cmd)
+					if err != nil {
+						fmt.Println(err)
+						break
+					}
+					if isExecutable {
+						fmt.Println(cmd + " is " + path + "/" + cmd)
 						found = true
+						break
 					}
 				}
 
