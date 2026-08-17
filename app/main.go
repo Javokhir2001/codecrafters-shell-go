@@ -3,32 +3,20 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strings"
+	"errors"
 )
 
 func executableExists(path string, filename string) (bool, error) {
-	files, err := os.ReadDir(path)
-	if err != nil {
-		if err == os.ErrNotExist {
-			log.Fatal(err)
-			return false, err
-		}
-	}
-	for _, file := range files {
-		fname := file.Name()
-		if fname == filename {
-
-			finfo, err := os.Lstat(path + "/" + fname)
+			finfo, err := os.Stat(path + "/" + filename)
 			if err != nil {
-				return false, err
+				if errors.Is(err, os.ErrNotExist) {
+					return false, nil
+				} 
 			}
 			isExecutable := finfo.Mode().Perm()&0111 != 0
 			return isExecutable, nil
-		}
-
-	}
 
 	return false, nil
 }
